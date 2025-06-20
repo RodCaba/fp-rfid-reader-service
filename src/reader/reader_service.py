@@ -36,8 +36,8 @@ class ReaderService:
       Any exceptions raised by the reader's read method are propagated to the caller.
     """
     try:
-      id, text = self.reader.read()
-      return id, text
+      self.reader.read()
+      return
     except Exception as e:
       print(f"Error reading RFID tag: {e}")
       raise e
