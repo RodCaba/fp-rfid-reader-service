@@ -22,7 +22,7 @@ class MFRC522Reader(Reader):
     """
     try:
       status, _ = self.reader.MFRC522_Request(self.reader.PICC_REQIDL)
-      print(status)
+      print(status == self.reader.MI_OK)
       if status != self.reader.MI_OK:
         sleep(0.1)
         return
