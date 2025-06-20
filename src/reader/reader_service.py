@@ -1,3 +1,5 @@
+from .base import Reader
+
 class ReaderService:
   """
   A service class to handle RFID reader operations.
@@ -12,12 +14,10 @@ class ReaderService:
   """
   def __init__(
       self,
-      reader = None,
-      gpio = None,
+      reader: Reader = None,
       is_raspberry_pi: bool = False,
     ):
     self.reader = reader
-    self.gpio = gpio
     self.is_raspberry_pi = is_raspberry_pi
 
   def read(self):
@@ -42,6 +42,4 @@ class ReaderService:
       print(f"Error reading RFID tag: {e}")
       raise e
     finally:
-      if self.is_raspberry_pi:
-        if self.gpio:
-          self.gpio.cleanup()
+      self.reader.cleanup()
