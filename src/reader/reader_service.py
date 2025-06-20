@@ -38,6 +38,9 @@ class ReaderService:
     try:
       id, text = self.reader.read()
       return id, text
+    except Exception as e:
+      print(f"Error reading RFID tag: {e}")
+      raise e
     finally:
       if self.is_raspberry_pi:
         if self.gpio:
