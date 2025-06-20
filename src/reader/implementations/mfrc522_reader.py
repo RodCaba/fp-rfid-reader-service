@@ -21,15 +21,16 @@ class MFRC522Reader(Reader):
       Exception: If there's an error reading the tag
     """
     try:
-      status = self.reader.MFRC522_Request(self.reader.PICC_REQIDL)
+      status, _ = self.reader.MFRC522_Request(self.reader.PICC_REQIDL)
+      print(status)
       if status != self.reader.MI_OK:
         sleep(0.1)
         return
-      status, back_data = self.reader.MFRC522_Anticoll()
+      """ status, back_data = self.reader.MFRC522_Anticoll()
       buf = self.reader.MFRC522_Read(0)
       self.reader.MFRC522_Request(self.reader.PICC_HALT)
       if buf:
-        print([hex(x) for x in buf])
+        print([hex(x) for x in buf]) """
     except Exception as e:
       print(e)
       
