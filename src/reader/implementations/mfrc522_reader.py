@@ -21,7 +21,7 @@ class MFRC522Reader(Reader):
       Exception: If there's an error reading the tag
     """
     try:
-      status, _ = self.reader.MFRC522_Request(self.reader.PICC_REQIDL)
+      status = self.reader.MFRC522_Request(self.reader.PICC_REQIDL)
       if status != self.reader.MI_OK:
         sleep(0.1)
         return
