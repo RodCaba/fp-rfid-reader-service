@@ -18,6 +18,9 @@ def main():
       break
     except Exception as e:
       print(f"An error occurred: {e}")
+    finally:
+      red_led.turn_off()
+      GPIO.cleanup()
 
 def run_reader_service():
   reader = MFRC522Reader()
