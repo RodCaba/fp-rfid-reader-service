@@ -21,6 +21,7 @@ class LedService:
     It ensures that the GPIO pin is cleaned up properly to avoid resource leaks.
     """
     if self.gpio is not None:
+      self.turn_off()
       self.gpio.cleanup()  # Clean up GPIO settings
   
   def turn_on(self):
