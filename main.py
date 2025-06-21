@@ -15,12 +15,10 @@ def main():
       run_reader_service()
     except KeyboardInterrupt:
       print("Exiting...")
+      red_led.turn_off()
       break
     except Exception as e:
       print(f"An error occurred: {e}")
-    finally:
-      red_led.turn_off()
-      GPIO.cleanup()
 
 def run_reader_service():
   reader = MFRC522Reader()
