@@ -24,7 +24,6 @@ class TestReaderService:
     
     self.reader = ReaderService(
       reader=self.mock_reader,
-      is_raspberry_pi=True      # Set to True for testing
     )
 
   def teardown_method(self):

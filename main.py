@@ -1,8 +1,15 @@
 from src.reader.reader_service import ReaderService
 from src.reader.implementations.mfrc522_reader import MFRC522Reader
+from src.led.led_service import LedService
+from RPi import GPIO
 from time import sleep
 
+RED_LED_PIN = 5
+IS_READING = False
+
 def main():
+  red_led = LedService(GPIO, RED_LED_PIN)
+  red_led.turn_on()
   while True:
     try:
       run_reader_service()
@@ -16,7 +23,6 @@ def run_reader_service():
   reader = MFRC522Reader()
   reader_service = ReaderService(
     reader=reader,
-    is_raspberry_pi=True  # Set to True for Raspberry Pi
   )
   id, text = reader_service.read()
   if id is not None:

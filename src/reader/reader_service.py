@@ -10,15 +10,12 @@ class ReaderService:
   Attributes:
     reader: The RFID reader device instance.
     gpio: GPIO controller instance, used for Raspberry Pi.
-    is_raspberry_pi (bool): Flag indicating if the code is running on a Raspberry Pi.
   """
   def __init__(
       self,
       reader: Reader = None,
-      is_raspberry_pi: bool = False,
     ):
     self.reader = reader
-    self.is_raspberry_pi = is_raspberry_pi
 
   def read(self):
     """
