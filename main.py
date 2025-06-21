@@ -9,7 +9,7 @@ IS_READING = False
 
 def main():
   red_led = LedService(GPIO, RED_LED_PIN)
-  red_led.turn_on()
+  red_led.turn_off()
   while True:
     try:
       run_reader_service()
