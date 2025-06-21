@@ -11,7 +11,6 @@ class LedService:
     self.pin = pin
     if self.gpio is not None:
       self.gpio.setmode(self.gpio.BCM)  # Set the GPIO mode to BCM
-      self.gpio.setwarnings(False)  # Disable GPIO warnings
       self.gpio.setup(self.pin, self.gpio.OUT)
 
   def __del__(self):
