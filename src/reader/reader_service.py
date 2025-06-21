@@ -30,16 +30,12 @@ class ReaderService:
     to ensure proper resource management regardless of success or failure.
 
     Returns:
-      tuple: A tuple containing the ID and text read from the RFID tag.
-
-    Raises:
-      Any exceptions raised by the reader's read method are propagated to the caller.
+      tuple: A tuple containing the ID and text read from the RFID tag. Returns none if no tag is detected or if an error occurs.
     """
     try:
-      self.reader.read()
-      return
+      id, text = self.reader.read()
+      return id, text
     except Exception as e:
-      print(f"Error reading RFID tag: {e}")
-      raise e
+      return None, None
     finally:
       self.reader.cleanup()

@@ -1,5 +1,6 @@
 from src.reader.reader_service import ReaderService
 from src.reader.implementations.mfrc522_reader import MFRC522Reader
+from time import sleep
 
 def main():
   while True:
@@ -17,7 +18,11 @@ def run_reader_service():
     reader=reader,
     is_raspberry_pi=True  # Set to True for Raspberry Pi
   )
-  reader_service.read()
+  id, text = reader_service.read()
+  if id is not None:
+    print(f"ID: {id}, Text: {text}")
+  else:
+    sleep(0.1)  # Wait before retrying if no tag is detected
 
 if __name__ == "__main__":
   main()

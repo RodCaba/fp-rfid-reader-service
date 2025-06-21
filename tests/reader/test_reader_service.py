@@ -45,13 +45,16 @@ class TestReaderService:
 
   def test_read_cleans_up_gpio_on_exception(self):
     """
-    Test that GPIO resources are properly cleaned up when an exception occurs during reading.
+    Test that GPIO resources are properly cleaned up when an exception occurs during reading, and None is returned for ID and text.
     """
     # Arrange - reconfigure the mock to raise an exception
     self.mock_reader.read.side_effect = Exception("Test exception")
     
-    with pytest.raises(Exception):
-      self.reader.read()
-    
+    # Act
+    id, text = self.reader.read()
+    # Assert
+
+    assert id is None
+    assert text is None
     # Verify cleanup was called even with exception
     self.mock_reader.cleanup.assert_called_once()
