@@ -18,6 +18,7 @@ def main():
       break
     except Exception as e:
       print(f"An error occurred: {e}")
+  GPIO.cleanup()  # Clean up GPIO settings on exit
 
 def run_reader_service():
   reader = MFRC522Reader()

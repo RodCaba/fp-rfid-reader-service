@@ -30,9 +30,6 @@ class MFRC522Reader(Reader):
   
     else:
       raise Exception("No tag detected")
-      
+    
   def cleanup(self):
-    """
-    Clean up GPIO resources
-    """
-    GPIO.cleanup()
+    pass

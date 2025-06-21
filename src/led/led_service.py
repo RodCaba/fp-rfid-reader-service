@@ -22,7 +22,6 @@ class LedService:
     """
     if self.gpio is not None:
       self.turn_off()
-      self.gpio.cleanup()  # Clean up GPIO settings
   
   def turn_on(self):
     """

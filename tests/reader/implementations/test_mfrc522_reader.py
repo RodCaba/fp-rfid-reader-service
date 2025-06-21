@@ -102,12 +102,3 @@ class TestMFRC522Reader:
     assert str(exc_info.value) == "Failed to read UID from tag"
     mock_mfrc522.MFRC522_Request.assert_called_once()
     mock_mfrc522.MFRC522_Anticoll.assert_called_once()
-    
-  def test_cleanup(self, reader):
-    """
-    Tests the cleanup method of MFRC522Reader.
-    This test verifies that the GPIO.cleanup() is called exactly once when the reader's cleanup method is invoked.
-    """
-    with patch('src.reader.implementations.mfrc522_reader.GPIO') as mock_gpio:
-      reader.cleanup()
-      mock_gpio.cleanup.assert_called_once()
