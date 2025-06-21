@@ -30,7 +30,6 @@ class LedService:
     This method is used to activate the LED connected to the specified GPIO pin.
     """
     if self.gpio is not None:
-      print(f"Turning on LED on pin {self.pin}")
       self.gpio.output(self.pin, self.gpio.HIGH)
 
   def turn_off(self):
