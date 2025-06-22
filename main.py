@@ -37,7 +37,10 @@ def run_reader_service():
     sleep(0.1)  # Wait before retrying if no tag is detected
 
 def run_lcd_service():
-  writer = CharLCDWriter()
+  writer = CharLCDWriter(
+    i2c_expander='PCF8574',
+    address=0x27,
+  )
   lcd_service = LCDService(writer)
   lcd_service.write("Hello, World!")
 
