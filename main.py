@@ -15,32 +15,44 @@ def main():
   red_led = LedService(GPIO, RED_LED_PIN)
   red_led.turn_on()
 
+  green_led = LedService(GPIO, 6)
+  green_led.turn_off()
+
   lcd_writer = CharLCDWriter(
     i2c_expander='PCF8574',
     address=0x27,
   )
   lcd_service = LCDService(lcd_writer)
   lcd_service.write("Starting RFID Reader...")
+
+  reader = MFRC522Reader()
+  reader_service = ReaderService(
+    reader=reader,
+  )
   while True:
     try:
-      run_reader_service()
+      id, text = reader_service.read()
+      if id is not None:
+        if not IS_READING:
+          lcd_service.write("Welcome!")
+          IS_READING = True
+          red_led.turn_off()
+          green_led.turn_on()
+        else:
+          lcd_service.write("Goodbye!")
+          IS_READING = False
+          red_led.turn_on()
+          green_led.turn_off()
+        sleep(3)
+        lcd_service.clear()
+      else:
+        sleep(0.1)  # Wait before retrying if no tag is detected
     except KeyboardInterrupt:
       print("Exiting...")
       break
     except Exception as e:
       print(f"An error occurred: {e}")
   GPIO.cleanup()  # Clean up GPIO settings on exit
-
-def run_reader_service():
-  reader = MFRC522Reader()
-  reader_service = ReaderService(
-    reader=reader,
-  )
-  id, text = reader_service.read()
-  if id is not None:
-    print(f"ID: {id}, Text: {text}")
-  else:
-    sleep(0.1)  # Wait before retrying if no tag is detected
 
 if __name__ == "__main__":
   main()
