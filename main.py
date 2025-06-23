@@ -4,7 +4,7 @@ from src.reader.implementations.mfrc522_reader import MFRC522Reader
 from src.lcd.lcd_service import LCDService
 from src.lcd.implementations.charlcd_writer import CharLCDWriter
 
-from gpio.gpio_controller import GPIOController
+from src.gpio.gpio_controller import GPIOController
 from RPi import GPIO
 from time import sleep
 
