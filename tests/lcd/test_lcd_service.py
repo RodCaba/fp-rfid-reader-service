@@ -39,3 +39,20 @@ class TestLCDService:
     with patch("builtins.print") as mock_print:
       self.lcd_service.write(test_text)
       mock_print.assert_called_with("Error writing to LCD: Test exception")
+
+  def test_clear_calls_writer_clear(self):
+    """
+    Test that the clear method calls the writer's clear method.
+    """
+    self.lcd_service.clear()
+    self.mock_writer.clear.assert_called_once()
+
+  def test_clear_handles_exception(self):
+    """
+    Test that the clear method handles exceptions raised by the writer's clear method.
+    """
+    self.mock_writer.clear.side_effect = Exception("Clear exception")
+    
+    with patch("builtins.print") as mock_print:
+      self.lcd_service.clear()
+      mock_print.assert_called_with("Error clearing LCD: Clear exception")

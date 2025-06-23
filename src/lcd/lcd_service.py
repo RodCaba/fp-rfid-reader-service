@@ -27,3 +27,14 @@ class LCDService:
       self.writer.write(text)
     except Exception as e:
       print(f"Error writing to LCD: {e}")
+
+  def clear(self):
+    """
+    Clears the LCD display.
+    
+    This method calls the clear method of the Writer instance to clear any text currently displayed.
+    """
+    try:
+      self.writer.clear()
+    except Exception as e:
+      print(f"Error clearing LCD: {e}")
