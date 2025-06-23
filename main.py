@@ -23,7 +23,7 @@ def main():
     address=0x27,
   )
   lcd_service = LCDService(lcd_writer)
-  lcd_service.write("Starting RFID Reader...")
+  lcd_service.write("RFID Reader started")
 
   reader = MFRC522Reader()
   reader_service = ReaderService(
@@ -34,6 +34,7 @@ def main():
       id, text = reader_service.read()
       global IS_READING
       if id is not None:
+        lcd_service.clear()
         if not IS_READING:
           lcd_service.write("Welcome!")
           IS_READING = True
