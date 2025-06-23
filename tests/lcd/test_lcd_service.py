@@ -1,4 +1,3 @@
-import pytest
 from unittest.mock import Mock, patch
 from src.lcd.lcd_service import LCDService
 from src.lcd.base import Writer
@@ -40,11 +39,3 @@ class TestLCDService:
     with patch("builtins.print") as mock_print:
       self.lcd_service.write(test_text)
       mock_print.assert_called_with("Error writing to LCD: Test exception")
-
-  def del_method(self):
-    """
-    Test to ensure that the LCDService calls the cleanup method on the writer when it is deleted.
-    """
-    with patch.object(self.mock_writer, 'cleanup') as mock_cleanup:
-      del self.lcd_service
-      mock_cleanup.assert_called_once()

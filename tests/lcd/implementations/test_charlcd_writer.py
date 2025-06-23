@@ -33,6 +33,12 @@ class TestCharLCDWriter:
     )
     
     assert writer.lcd == mock_charlcd
+
+  def test_release(self, writer, mock_charlcd):
+    # Test the cleanup of CharLCDWriter
+    writer.__del__()
+    
+    mock_charlcd.clear.assert_called_once()
     
   def test_write_success(self, writer, mock_charlcd):
     # Test successful write operation
