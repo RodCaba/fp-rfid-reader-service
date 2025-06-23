@@ -4,19 +4,23 @@ from src.reader.implementations.mfrc522_reader import MFRC522Reader
 from src.lcd.lcd_service import LCDService
 from src.lcd.implementations.charlcd_writer import CharLCDWriter
 
-from src.led.led_service import LedService
+from gpio.gpio_controller import GPIOController
 from RPi import GPIO
 from time import sleep
 
 RED_LED_PIN = 5
+GREEN_LED_PIN = 6
+BUZZER_PIN = 16
 IS_READING = False
 
 def main():
-  red_led = LedService(GPIO, RED_LED_PIN)
+  red_led = GPIOController(GPIO, RED_LED_PIN)
   red_led.turn_on()
 
-  green_led = LedService(GPIO, 6)
+  green_led = GPIOController(GPIO, GREEN_LED_PIN)
   green_led.turn_off()
+
+  buzzer = GPIOController(GPIO, BUZZER_PIN, component_type="BUZZER")
 
   lcd_writer = CharLCDWriter(
     i2c_expander='PCF8574',
@@ -35,6 +39,9 @@ def main():
       global IS_READING
       if id is not None:
         lcd_service.clear()
+        buzzer.turn_on()
+        sleep(0.5)  # Buzzer on for 0.5 seconds
+        buzzer.turn_off()
         if not IS_READING:
           lcd_service.write("Welcome!")
           IS_READING = True
