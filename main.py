@@ -32,6 +32,7 @@ def main():
   while True:
     try:
       id, text = reader_service.read()
+      global IS_READING
       if id is not None:
         if not IS_READING:
           lcd_service.write("Welcome!")
