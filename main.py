@@ -40,7 +40,7 @@ def main():
       if id is not None:
         lcd_service.clear()
         buzzer.turn_on()
-        sleep(0.5)  # Buzzer on for 0.5 seconds
+        sleep(0.1)  # Buzzer on for 0.1 seconds
         buzzer.turn_off()
         if not IS_READING:
           lcd_service.write("Welcome!")
