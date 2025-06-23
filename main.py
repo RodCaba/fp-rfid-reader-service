@@ -14,7 +14,13 @@ IS_READING = False
 def main():
   red_led = LedService(GPIO, RED_LED_PIN)
   red_led.turn_on()
-  run_lcd_service()
+
+  lcd_writer = CharLCDWriter(
+    i2c_expander='PCF8574',
+    address=0x27,
+  )
+  lcd_service = LCDService(lcd_writer)
+  lcd_service.write("Starting RFID Reader...")
   while True:
     try:
       run_reader_service()
@@ -35,14 +41,6 @@ def run_reader_service():
     print(f"ID: {id}, Text: {text}")
   else:
     sleep(0.1)  # Wait before retrying if no tag is detected
-
-def run_lcd_service():
-  writer = CharLCDWriter(
-    i2c_expander='PCF8574',
-    address=0x27,
-  )
-  lcd_service = LCDService(writer)
-  lcd_service.write("Hello, World!")
 
 if __name__ == "__main__":
   main()
