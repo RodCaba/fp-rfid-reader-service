@@ -9,7 +9,7 @@ class Writer(ABC):
     """
     def __init__(
             self,
-            i2c_expander=None,
+            i2c_expander="PCF8574",
             address=0x27,
             port=1,
             cols=16,
@@ -36,7 +36,10 @@ class Writer(ABC):
         The LCD display should be cleared to ensure no residual text
         remains when the writer is no longer in use.
         """
-        self.clear()
+        try:
+            self.clear()
+        except Exception as e:
+            print(f"Error during cleanup: {e}")
 
     @abstractmethod
     def write(self, text: str):

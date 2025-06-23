@@ -8,7 +8,7 @@ class CharLCDWriter(Writer):
 
     def __init__(
             self,
-            i2c_expander=None,
+            i2c_expander="PCF8574",
             address=0x27,
             port=1,
             cols=16,
