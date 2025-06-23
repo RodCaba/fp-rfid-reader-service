@@ -23,6 +23,8 @@ class GPIOController:
     It ensures that the GPIO pin is cleaned up properly to avoid resource leaks.
     """
     if self.gpio is not None:
+      self.gpio.setmode(self.gpio.BCM)  # Set the GPIO mode to BCM
+      self.gpio.setup(self.pin, self.gpio.OUT)
       self.turn_off()
 
   def turn_on(self):
