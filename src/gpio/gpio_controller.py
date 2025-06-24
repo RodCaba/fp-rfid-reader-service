@@ -1,4 +1,8 @@
 class GPIOController:
+  """
+  A class to control GPIO pins for various output components.
+  This class is designed to handle components like LEDs and buzzers
+  """
   def __init__(self, gpio=None, pin=18, component_type="LED"):
     """
     Initializes the GPIOController for handling various output components.
