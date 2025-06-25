@@ -5,6 +5,7 @@ import RPi.GPIO as GPIO
 class MFRC522Reader(Reader):
   """
   Concrete implementation of the reader interface for MFRC522 RFID readers.
+  Implementation extracted from https://github.com/pimylifeup/MFRC522-python/issues/31#issuecomment-730123689
   """
   def __init__(self):
     self.reader = MFRC522()
