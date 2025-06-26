@@ -25,5 +25,10 @@ jobs:
     
     - name: Run tests
       run: |
-        # Run all tests
-        python -m pytest -vv
+        # Run unit tests
+        python -m pytest -vv -m "not integration"
+
+    - name: Run integration tests
+      run: |
+        # Run integration tests
+        python -m pytest -vv -m "integration"

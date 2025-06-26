@@ -41,3 +41,52 @@ def smbus2():
 def rplcd():
     """Provide access to the mocked RPLCD module."""
     return mock_rplcd
+
+# INTEGRATION TEST FIXTURES
+
+@pytest.fixture
+def mock_reader():
+    """Mock RFID reader that returns predictable data"""
+    from src.reader.base import Reader
+    
+    class MockReader(Reader):
+        def __init__(self, uid=None, text=None):
+            self.uid = uid or [1, 2, 3, 4, 5]
+            self.text = text or "Test Card"
+            self.read_called = False
+            self.cleanup_called = False
+            
+        def read(self):
+            self.read_called = True
+            return self.uid, self.text
+            
+        def cleanup(self):
+            self.cleanup_called = True
+    
+    return MockReader()
+
+@pytest.fixture
+def mock_writer():
+    """Mock LCD writer for testing"""
+    from src.lcd.base import Writer
+    
+    class MockWriter(Writer):
+        def __init__(self):
+            super().__init__()
+            self.written_text = []
+            self.cleared = False
+            
+        def write(self, text):
+            self.written_text.append(text)
+            
+        def clear(self):
+            self.cleared = True
+            self.written_text = []
+    
+    return MockWriter()
+
+@pytest.fixture
+def gpio_controller():
+    """Fixture for a GPIO controller using the mocked GPIO"""
+    from src.gpio.gpio_controller import GPIOController
+    return lambda pin, component_type="LED": GPIOController(gpio=mock_GPIO, pin=pin, component_type=component_type)
