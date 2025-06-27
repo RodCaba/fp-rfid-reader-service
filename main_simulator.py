@@ -6,7 +6,7 @@ Simulates RFID card detection and communicates with audio service via gRPC
 import time
 import logging
 import uuid
-from src.grpc.audio_client import AudioClient
+from audio_client import AudioClient
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

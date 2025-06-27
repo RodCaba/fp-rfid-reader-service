@@ -5,7 +5,7 @@ from src.lcd.lcd_service import LCDService
 from src.lcd.implementations.charlcd_writer import CharLCDWriter
 
 from src.gpio.gpio_controller import GPIOController
-from src.grpc.audio_client import AudioServiceClient
+from audio_client import AudioServiceClient
 from RPi import GPIO
 from time import sleep
 import logging

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   rfid-reader-service:
     build:
@@ -27,16 +25,18 @@ services:
 
     # Privileged mode for GPIO access (alternative to device mapping)
     privileged: true
+    
+    # Security options to handle networking issues
+    security_opt:
+      - no-new-privileges:true
 
     # Volume mappings
     volumes:
       - ./logs:/app/logs # Application logs
       - /sys:/sys:ro # System files (read-only)
-      - /proc:/proc:ro # Process files (read-only)
 
     # Network configuration
-    networks:
-      - rfid-network
+    network_mode: "bridge"
 
     # Health check
     healthcheck:
@@ -55,14 +55,6 @@ services:
         reservations:
           memory: 256M
           cpus: '0.5'
-
-# Network configuration
-networks:
-  rfid-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
 
 # Volumes for persistent data
 volumes:

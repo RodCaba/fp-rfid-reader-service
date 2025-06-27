@@ -1,12 +1,11 @@
 import grpc
 import time
 import uuid
-import threading
 import logging
 from typing import Dict, Optional
 
-from src.grpc.grpc_generated import audio_service_pb2
-from src.grpc.grpc_generated import audio_service_pb2_grpc
+from src.grpc_generated import audio_service_pb2
+from src.grpc_generated import audio_service_pb2_grpc
 
 
 class AudioClient:

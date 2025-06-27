@@ -1,5 +1,5 @@
 # Multi-stage build for ARM64/AMD64 compatibility
-FROM python:3.11-slim as builder
+FROM python:3.12-slim AS builder
 
 # Install build dependencies
 RUN apt-get update && apt-get install -y \
@@ -16,8 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
 
 # Production stage
-FROM python:3.12-slim
-
+FROM builder
 # Update and upgrade packages to fix vulnerabilities
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -48,16 +47,16 @@ COPY . .
 COPY ./proto/audio_service.proto /tmp/audio_service.proto
 
 # Create necessary directories
-RUN mkdir -p src/grpc/grpc_generated && \
+RUN mkdir -p src/grpc_generated && \
     chown -R app:app /app
 
 # Generate gRPC code at build time
 RUN python -m grpc_tools.protoc \
     --proto_path=/tmp \
-    --python_out=./src/grpc/grpc_generated \
-    --grpc_python_out=./src/grpc/grpc_generated \
+    --python_out=./src/grpc_generated \
+    --grpc_python_out=./src/grpc_generated \
     /tmp/audio_service.proto && \
-    sed -i 's/import audio_service_pb2/from . import audio_service_pb2/g' ./src/grpc/grpc_generated/audio_service_pb2_grpc.py
+    sed -i 's/import audio_service_pb2/from . import audio_service_pb2/g' ./src/grpc_generated/audio_service_pb2_grpc.py
 
 # Switch to non-root user
 USER app
@@ -74,4 +73,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import sys; sys.exit(0)"
 
 # Run the RFID service
-CMD ["python", "main.py"]
+CMD ["python", "main_simulator.py"]
