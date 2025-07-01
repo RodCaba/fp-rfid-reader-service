@@ -5,7 +5,7 @@ from src.lcd.lcd_service import LCDService
 from src.lcd.implementations.charlcd_writer import CharLCDWriter
 
 from src.gpio.gpio_controller import GPIOController
-from audio_client import AudioServiceClient
+from src.audio_client import AudioServiceClient
 from RPi import GPIO
 from time import sleep
 import logging
@@ -35,7 +35,7 @@ def main():
   lcd_service = LCDService(lcd_writer)
   lcd_service.write("RFID Reader started")
 
-  # Initialize audio service client
+  # Initialize audio service client (uses AUDIO_SERVICE_URL env var)
   audio_client = AudioServiceClient()
   
   # Wait for audio service to be available

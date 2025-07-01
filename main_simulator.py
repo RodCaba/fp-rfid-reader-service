@@ -6,7 +6,7 @@ Simulates RFID card detection and communicates with audio service via gRPC
 import time
 import logging
 import uuid
-from audio_client import AudioClient
+from src.audio_client import AudioServiceClient
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -20,8 +20,8 @@ class RFIDSimulator:
         self.is_reading = False
         self.simulation_interval = 10  # seconds between simulated card detections
         
-        # Initialize audio service client
-        self.audio_client = AudioClient()
+        # Initialize audio service client (uses AUDIO_SERVICE_URL env var)
+        self.audio_client = AudioServiceClient()
     
     def simulate_lcd_write(self, message):
         """Simulate LCD display"""

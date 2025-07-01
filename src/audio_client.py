@@ -1,17 +1,23 @@
 import grpc
 import time
 import uuid
+import threading
 import logging
+import os
 from typing import Dict, Optional
 
 from src.grpc_generated import audio_service_pb2
 from src.grpc_generated import audio_service_pb2_grpc
 
 
-class AudioClient:
-    """gRPC client for Audio Processing Service"""
+class AudioServiceClient:
+    """gRPC client for Audio Service"""
     
-    def __init__(self, server_address: str = "audio-service:50051", timeout: int = 30):
+    def __init__(self, server_address: str = None, timeout: int = 30):
+        # Use environment variable or default to Docker service name
+        if server_address is None:
+            server_address = os.environ.get('AUDIO_SERVICE_URL', 'audio-service:50051')
+        
         self.server_address = server_address
         self.timeout = timeout
         self.channel = None
@@ -23,6 +29,7 @@ class AudioClient:
     def _connect(self):
         """Establish connection to audio service"""
         try:
+            self.logger.info(f"Attempting to connect to audio service at {self.server_address}")
             self.channel = grpc.insecure_channel(self.server_address)
             self.stub = audio_service_pb2_grpc.AudioServiceStub(self.channel)
             self.logger.info(f"Connected to audio service at {self.server_address}")
