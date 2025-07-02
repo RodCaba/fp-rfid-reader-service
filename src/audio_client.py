@@ -16,7 +16,7 @@ class AudioServiceClient:
     def __init__(self, server_address: str = None, timeout: int = 30):
         # Use environment variable or default to Docker service name
         if server_address is None:
-            server_address = os.environ.get('AUDIO_SERVICE_URL', 'audio-service:50051')
+            server_address = os.environ.get('AUDIO_SERVICE_URL', 'localhost:50051')
         
         self.server_address = server_address
         self.timeout = timeout
