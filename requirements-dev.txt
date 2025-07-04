@@ -1,0 +1,20 @@
+# Development dependencies for linting, formatting, and type checking
+black==24.8.0
+isort==5.13.2
+flake8==7.1.1
+pylint==3.2.7
+mypy==1.11.2
+pre-commit==3.8.0
+
+# Security tools
+bandit[toml]==1.7.9
+safety==3.2.7
+
+# Additional flake8 plugins
+flake8-docstrings==1.7.0
+flake8-import-order==0.18.2
+flake8-bugbear==24.8.19
+flake8-comprehensions==3.15.0
+
+# Type stubs for external libraries
+types-protobuf==5.27.0.20240907
