@@ -90,18 +90,15 @@ def main():
                 error_msg = result.get('error_message', 'Unknown error') if result else 'No response'
                 logger.error(f"Audio processing failed: {error_msg}")
 
-              try:
-                id, text = reader_service.read()
-                if id is not None:
-                  lcd_service.write("Goodbye!")
-                  IS_READING = False
-                  red_led.turn_on()
-                  green_led.turn_off()
-                  sleep(2)
-                  lcd_service.clear()
-              except Exception as e:
-                lcd_service.write("Error reading tag")
-                logger.error(f"Error reading tag: {e}")
+              # Read the tag again to confirm exit
+              id, text = reader_service.read()
+              if id is not None:
+                lcd_service.write("Goodbye!")
+                IS_READING = False
+                red_led.turn_on()
+                green_led.turn_off()
+                sleep(2)
+                lcd_service.clear()
             except Exception as e:
               lcd_service.write("Audio error")
               logger.error(f"Audio processing error: {e}")
