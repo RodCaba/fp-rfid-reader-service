@@ -6,6 +6,7 @@ Simulates RFID card detection and communicates with audio service via gRPC
 import time
 import logging
 import uuid
+import threading
 from src.audio_client import AudioServiceClient
 
 # Configure logging
@@ -36,6 +37,46 @@ class RFIDSimulator:
         print(f"[BUZZER] BEEP for {duration}s")
         time.sleep(duration)
     
+    def audio_processing_loop(self):
+        """Continuously process audio in background while is_reading is True"""
+        while self.is_reading:
+            try:
+                # Trigger audio recording and prediction via gRPC
+                self.simulate_lcd_write("Processing audio...")
+                logger.info("Triggering audio recording and prediction via gRPC")
+                
+                result = self.audio_client.start_audio_processing(duration=5)
+                if result and result.get('success'):
+                    predicted_class = result.get('predicted_class', 'Unknown')
+                    confidence = result.get('confidence', 0)
+                    top_predictions = result.get('top_predictions', [])
+                    
+                    # Display prediction results
+                    self.simulate_lcd_write(f"Audio: {predicted_class}")
+                    time.sleep(2)
+                    self.simulate_lcd_write(f"Confidence: {confidence:.2f}")
+                    
+                    logger.info(f"Audio prediction: {predicted_class} (confidence: {confidence:.2f})")
+                    logger.info(f"Top predictions: {top_predictions}")
+                else:
+                    self.simulate_lcd_write("Audio processing failed")
+                    error_msg = result.get('error_message', 'Unknown error') if result else 'No response'
+                    logger.error(f"Audio processing failed: {error_msg}")
+                
+                # Small delay before next iteration (only if still reading)
+                if self.is_reading:
+                    time.sleep(1)
+                    
+            except Exception as e:
+                self.simulate_lcd_write("Audio error")
+                logger.error(f"Audio processing error: {e}")
+                if self.is_reading:
+                    time.sleep(1)
+        
+        # When exiting the loop, clear the display
+        self.simulate_lcd_write("")  # Clear display
+        logger.info("Audio processing loop ended")
+    
     def wait_for_audio_service(self):
         """Wait for audio service to be available"""
         self.simulate_lcd_write("Waiting for audio...")
@@ -63,34 +104,15 @@ class RFIDSimulator:
             self.simulate_led_control("RED", False)
             self.simulate_led_control("GREEN", True)
             
-            # Trigger audio recording and prediction via gRPC
-            self.simulate_lcd_write("Processing audio...")
-            logger.info("Triggering audio recording and prediction via gRPC")
+            # Start audio processing in background thread
+            audio_thread = threading.Thread(target=self.audio_processing_loop)
+            audio_thread.daemon = True  # Thread will exit when main program exits
+            audio_thread.start()
             
-            try:
-                result = self.audio_client.start_audio_processing(duration=5)
-                if result and result.get('success'):
-                    predicted_class = result.get('predicted_class', 'Unknown')
-                    confidence = result.get('confidence', 0)
-                    top_predictions = result.get('top_predictions', [])
-                    
-                    # Display prediction results
-                    self.simulate_lcd_write(f"Audio: {predicted_class}")
-                    time.sleep(2)
-                    self.simulate_lcd_write(f"Confidence: {confidence:.2f}")
-                    
-                    logger.info(f"Audio prediction: {predicted_class} (confidence: {confidence:.2f})")
-                    logger.info(f"Top predictions: {top_predictions}")
-                else:
-                    self.simulate_lcd_write("Audio processing failed")
-                    error_msg = result.get('error_message', 'Unknown error') if result else 'No response'
-                    logger.error(f"Audio processing failed: {error_msg}")
-            except Exception as e:
-                self.simulate_lcd_write("Audio error")
-                logger.error(f"Audio processing error: {e}")
         else:
+            # Second RFID swipe - stop the audio processing
             self.simulate_lcd_write("Goodbye!")
-            self.is_reading = False
+            self.is_reading = False  # This will cause the background loop to exit
             self.simulate_led_control("RED", True)
             self.simulate_led_control("GREEN", False)
         

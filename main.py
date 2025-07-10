@@ -9,6 +9,7 @@ from src.audio_client import AudioServiceClient
 from RPi import GPIO
 from time import sleep
 import logging
+import threading
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,6 +19,47 @@ RED_LED_PIN = 5
 GREEN_LED_PIN = 6
 BUZZER_PIN = 16
 IS_READING = False
+
+def audio_processing_loop(audio_client, lcd_service, logger):
+  """Continuously process audio in background while IS_READING is True"""
+  global IS_READING
+  
+  while IS_READING:
+    try:
+      # Trigger audio recording and prediction via gRPC
+      lcd_service.write("Processing audio...")
+      logger.info("Triggering audio recording and prediction via gRPC")
+      
+      result = audio_client.start_audio_processing(duration=5)
+      if result and result.get('success'):
+        predicted_class = result.get('predicted_class', 'Unknown')
+        confidence = result.get('confidence', 0)
+        
+        # Display prediction on LCD
+        lcd_service.clear()
+        lcd_service.write(f"Audio: {predicted_class}")
+        sleep(2)
+        lcd_service.write(f"Confidence: {confidence:.2f}")
+        
+        logger.info(f"Audio prediction: {predicted_class} (confidence: {confidence:.2f})")
+      else:
+        lcd_service.write("Audio processing failed")
+        error_msg = result.get('error_message', 'Unknown error') if result else 'No response'
+        logger.error(f"Audio processing failed: {error_msg}")
+      
+      # Small delay before next iteration (only if still reading)
+      if IS_READING:
+        sleep(1)
+        
+    except Exception as e:
+      lcd_service.write("Audio error")
+      logger.error(f"Audio processing error: {e}")
+      if IS_READING:
+        sleep(1)
+  
+  # When exiting the loop, clear the display
+  lcd_service.clear()
+  logger.info("Audio processing loop ended")
 
 def main():
   red_led = GPIOController(GPIO, RED_LED_PIN)
@@ -67,41 +109,20 @@ def main():
           red_led.turn_off()
           green_led.turn_on()
 
-          while IS_READING:
-            # Trigger audio recording and prediction via gRPC
-            lcd_service.write("Processing audio...")
-            logger.info("Triggering audio recording and prediction via gRPC")
-            
-            try:
-              result = audio_client.start_audio_processing(duration=5)
-              if result and result.get('success'):
-                predicted_class = result.get('predicted_class', 'Unknown')
-                confidence = result.get('confidence', 0)
-                
-                # Display prediction on LCD
-                lcd_service.clear()
-                lcd_service.write(f"Audio: {predicted_class}")
-                sleep(2)
-                lcd_service.write(f"Confidence: {confidence:.2f}")
-                
-                logger.info(f"Audio prediction: {predicted_class} (confidence: {confidence:.2f})")
-              else:
-                lcd_service.write("Audio processing failed")
-                error_msg = result.get('error_message', 'Unknown error') if result else 'No response'
-                logger.error(f"Audio processing failed: {error_msg}")
-
-              # Read the tag again to confirm exit
-              id, text = reader_service.read()
-              if id is not None:
-                lcd_service.write("Goodbye!")
-                IS_READING = False
-                red_led.turn_on()
-                green_led.turn_off()
-                sleep(2)
-                lcd_service.clear()
-            except Exception as e:
-              lcd_service.write("Audio error")
-              logger.error(f"Audio processing error: {e}")
+          # Start audio processing in background thread
+          audio_thread = threading.Thread(
+            target=audio_processing_loop,
+            args=(audio_client, lcd_service, logger)
+          )
+          audio_thread.daemon = True  # Thread will exit when main program exits
+          audio_thread.start()
+          
+        else:
+          # Second RFID swipe - stop the audio processing
+          lcd_service.write("Goodbye!")
+          IS_READING = False  # This will cause the background loop to exit
+          red_led.turn_on()
+          green_led.turn_off()
         sleep(3)
         lcd_service.clear()
       else:
