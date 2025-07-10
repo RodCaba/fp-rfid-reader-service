@@ -66,36 +66,45 @@ def main():
           IS_READING = True
           red_led.turn_off()
           green_led.turn_on()
-          
-          # Trigger audio recording and prediction via gRPC
-          lcd_service.write("Processing audio...")
-          logger.info("Triggering audio recording and prediction via gRPC")
-          
-          try:
-            result = audio_client.start_audio_processing(duration=5)
-            if result and result.get('success'):
-              predicted_class = result.get('predicted_class', 'Unknown')
-              confidence = result.get('confidence', 0)
-              
-              # Display prediction on LCD
-              lcd_service.clear()
-              lcd_service.write(f"Audio: {predicted_class}")
-              sleep(2)
-              lcd_service.write(f"Confidence: {confidence:.2f}")
-              
-              logger.info(f"Audio prediction: {predicted_class} (confidence: {confidence:.2f})")
-            else:
-              lcd_service.write("Audio processing failed")
-              error_msg = result.get('error_message', 'Unknown error') if result else 'No response'
-              logger.error(f"Audio processing failed: {error_msg}")
-          except Exception as e:
-            lcd_service.write("Audio error")
-            logger.error(f"Audio processing error: {e}")
-        else:
-          lcd_service.write("Goodbye!")
-          IS_READING = False
-          red_led.turn_on()
-          green_led.turn_off()
+
+          while IS_READING:
+            # Trigger audio recording and prediction via gRPC
+            lcd_service.write("Processing audio...")
+            logger.info("Triggering audio recording and prediction via gRPC")
+            
+            try:
+              result = audio_client.start_audio_processing(duration=5)
+              if result and result.get('success'):
+                predicted_class = result.get('predicted_class', 'Unknown')
+                confidence = result.get('confidence', 0)
+                
+                # Display prediction on LCD
+                lcd_service.clear()
+                lcd_service.write(f"Audio: {predicted_class}")
+                sleep(2)
+                lcd_service.write(f"Confidence: {confidence:.2f}")
+                
+                logger.info(f"Audio prediction: {predicted_class} (confidence: {confidence:.2f})")
+              else:
+                lcd_service.write("Audio processing failed")
+                error_msg = result.get('error_message', 'Unknown error') if result else 'No response'
+                logger.error(f"Audio processing failed: {error_msg}")
+
+              try:
+                id, text = reader_service.read()
+                if id is not None:
+                  lcd_service.write("Goodbye!")
+                  IS_READING = False
+                  red_led.turn_on()
+                  green_led.turn_off()
+                  sleep(2)
+                  lcd_service.clear()
+              except Exception as e:
+                lcd_service.write("Error reading tag")
+                logger.error(f"Error reading tag: {e}")
+            except Exception as e:
+              lcd_service.write("Audio error")
+              logger.error(f"Audio processing error: {e}")
         sleep(3)
         lcd_service.clear()
       else:
