@@ -1,0 +1,20 @@
+{
+    "mqtt": {
+        "broker_host": "localhost",
+        "broker_port": 1883,
+        "topics": {
+            "recording_control": "imu/recording/control",
+            "status": "imu/status"
+        },
+        "client_id": "rfid_service_client"
+    },
+    "data": {
+        "log_file": "rfid_service.log"
+    },
+    "network": {
+        "static_ip": "192.168.1.209",
+        "netmask": "255.255.255.0",
+        "gateway": "192.168.1.254",
+        "dns": ["8.8.8.8", "8.8.4.4"]
+    }
+}

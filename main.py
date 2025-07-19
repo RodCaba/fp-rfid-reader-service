@@ -6,10 +6,13 @@ from src.lcd.implementations.charlcd_writer import CharLCDWriter
 
 from src.gpio.gpio_controller import GPIOController
 from src.audio_client import AudioServiceClient
+from fp_mqtt_broker.factories import BrokerFactory
 from RPi import GPIO
 from time import sleep
+
 import logging
 import threading
+import json
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -61,6 +64,9 @@ def audio_processing_loop(audio_client, lcd_service, logger):
   lcd_service.clear()
   logger.info("Audio processing loop ended")
 
+with open('config.json', 'r') as config_file:
+  config = json.load(config_file)
+
 def main():
   red_led = GPIOController(GPIO, RED_LED_PIN)
   red_led.turn_on()
@@ -94,6 +100,21 @@ def main():
   reader_service = ReaderService(
     reader=reader,
   )
+
+  # Initialize MQTT broker
+  mqtt_broker = BrokerFactory.create_broker(
+    config=config,
+  )
+
+  # Start the MQTT broker
+  if mqtt_broker.connect():
+    logger.info("MQTT broker started successfully")
+  else:
+    logger.error("Failed to start MQTT broker")
+    return
+
+  lcd_service.write("MQTT Broker ready")
+
   while True:
     try:
       id, text = reader_service.read()
@@ -116,6 +137,11 @@ def main():
           )
           audio_thread.daemon = True  # Thread will exit when main program exits
           audio_thread.start()
+
+          mqtt_broker.publish_message(
+            topic=config['mqtt']['topics']['recording_control'],
+            payload="start"
+          )
           
         else:
           # Second RFID swipe - stop the audio processing
@@ -123,6 +149,11 @@ def main():
           IS_READING = False  # This will cause the background loop to exit
           red_led.turn_on()
           green_led.turn_off()
+
+          mqtt_broker.publish_message(
+            topic=config['mqtt']['topics']['recording_control'],
+            payload="end"
+          )
         sleep(3)
         lcd_service.clear()
       else:

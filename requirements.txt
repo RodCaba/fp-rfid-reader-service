@@ -9,3 +9,4 @@ pytest-cov==6.2.1
 grpcio==1.60.0
 grpcio-tools==1.60.0
 protobuf==4.21.6
+fp-mqtt-broker==0.1.2
