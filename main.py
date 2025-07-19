@@ -140,7 +140,7 @@ def main():
 
           mqtt_broker.publish_message(
             topic=config['mqtt']['topics']['recording_control'],
-            payload="start"
+            payload=json.dumps({"action": "start", "session_id": id})
           )
           
         else:
@@ -152,7 +152,7 @@ def main():
 
           mqtt_broker.publish_message(
             topic=config['mqtt']['topics']['recording_control'],
-            payload="end"
+            payload=json.dumps({"action": "stop", "session_id": id})
           )
         sleep(3)
         lcd_service.clear()
