@@ -1,1 +1,5 @@
+# Environments
 .venv
+
+# Python bytecode files
+__pycache__/
