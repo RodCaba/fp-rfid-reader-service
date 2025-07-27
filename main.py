@@ -15,7 +15,9 @@ def main():
       print("Exiting...")
     except Exception as e:
       print(f"An error occurred: {e}")
-    GPIO.cleanup()  # Clean up GPIO settings on exit
+    finally:
+        GPIO.cleanup()  # Clean up GPIO settings on exit
+        logger.info("RFID service stopped and GPIO cleaned up.")
 
 if __name__ == "__main__":
   main()
