@@ -67,7 +67,7 @@ class RFIDService:
                     sleep(0.1)  # Buzzer on for 0.1 seconds
                     self.buzzer.turn_off()
 
-                    tag_id_hashable = tuple(tag_id) if isinstance(tag_id, list) else tag_id
+                    tag_id_hashable = str(tag_id) if isinstance(tag_id, list) else str(tag_id)
                     logger.info(f"Tag read: {tag_id_hashable}, Text: {tag_text}")
 
                     if tag_id_hashable not in self.current_tags:
