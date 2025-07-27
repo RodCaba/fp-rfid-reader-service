@@ -6,6 +6,7 @@ from src.reader.implementations.mfrc522_reader import MFRC522Reader
 from src.reader.reader_service import ReaderService
 from time import sleep
 import logging
+from fp_orchestrator_utils import OrchestratorClient
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,6 +36,10 @@ class RFIDService:
         )
         self.current_tags = set()
         self.is_reading = False
+        self.orchestrator_client = OrchestratorClient(
+            "localhost:50051",
+            timeout=30
+        )
         self._start()
     
     def _start(self):
@@ -67,11 +72,19 @@ class RFIDService:
 
                     if tag_id_hashable not in self.current_tags:
                         self.current_tags.add(tag_id_hashable)
+                        self.orchestrator_client.send_rfid_data(
+                            device_id="rfid_reader",
+                            tags= list(self.current_tags),
+                        )
                         self.lcd_service.clear()
                         self.lcd_service.write("Welcome!")
                     else:
                         self.lcd_service.write(f"Goodbye {tag_text}!")
                         self.current_tags.remove(tag_id_hashable)
+                        self.orchestrator_client.send_rfid_data(
+                            device_id="rfid_reader",
+                            tags= list(self.current_tags),
+                        )
                     self.lcd_service.clear()
                 else:
                     sleep(0.5)  # No tag read, wait before next attempt

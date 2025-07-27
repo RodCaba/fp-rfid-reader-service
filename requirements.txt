@@ -6,7 +6,10 @@ RPLCD==1.4.0
 smbus2==0.5.0
 coverage==7.9.1
 pytest-cov==6.2.1
-grpcio==1.60.0
-grpcio-tools==1.60.0
-protobuf==4.21.6
+grpcio==1.73.1
+grpcio-tools==1.73.1
+protobuf==6.31.1
+
+# FP utils
 fp-mqtt-broker==0.1.2
+fp-orchestrator-utils==0.2.0
