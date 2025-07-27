@@ -12,4 +12,4 @@ protobuf==6.31.1
 
 # FP utils
 fp-mqtt-broker==0.1.2
-fp-orchestrator-utils==0.2.0
+fp-orchestrator-utils==0.2.1
