@@ -54,21 +54,25 @@ class RFIDService:
                 else:
                     self.red_led.turn_on()
                     self.green_led.turn_off()
+
                 logger.info(f"Current tags: {self.current_tags}")
                 tag_id, tag_text = self.reader_service.read()
                 if tag_id is not None:
+                    self.buzzer.turn_on()
+                    sleep(0.1)  # Buzzer on for 0.1 seconds
+                    self.buzzer.turn_off()
+
                     tag_id_hashable = tuple(tag_id) if isinstance(tag_id, list) else tag_id
                     logger.info(f"Tag read: {tag_id_hashable}, Text: {tag_text}")
+
                     if tag_id_hashable not in self.current_tags:
                         self.current_tags.add(tag_id_hashable)
                         self.lcd_service.clear()
-                        self.buzzer.turn_on()
-                        sleep(0.1)  # Buzzer on for 0.1 seconds
-                        self.buzzer.turn_off()
                         self.lcd_service.write("Welcome!")
                     else:
                         self.lcd_service.write(f"Goodbye {tag_text}!")
                         self.current_tags.remove(tag_id_hashable)
+                    self.lcd_service.clear()
                 else:
                     sleep(0.5)  # No tag read, wait before next attempt
             except Exception as e:
